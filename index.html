@@ -6,11 +6,11 @@
     <title>TIMED PRACTICE SESSIONS TIMER</title>
     <style>
         body {
-            background: url('asswhipe.jpeg') no-repeat center center fixed; /* Background image file */
+            background: url('asswhipe.jpeg') no-repeat center center fixed;
             background-size: cover;
             display: flex;
-            justify-content: center; /* Center horizontally */
-            align-items: center; /* Center vertically */
+            justify-content: center;
+            align-items: center;
             height: 100vh;
             margin: 0;
             padding: 20px;
@@ -24,8 +24,8 @@
             height: 100%;
         }
         .right {
-            width: 700px; /* Width of the iframe */
-            height: 700px; /* Height of the iframe */
+            width: 700px;
+            height: 700px;
         }
     </style>
 </head>
@@ -36,5 +36,44 @@
         </div>
     </div>
     <button onclick="window.close()">Close Page</button>
+
+    <script>
+        const CACHE_NAME = 'site-cache-v1';
+        const urlsToCache = [
+            '/',
+            '/index.html',
+            '/asswhipe.jpeg',
+            // Add any other assets you want to cache
+        ];
+
+        self.addEventListener('install', event => {
+            event.waitUntil(
+                caches.open(CACHE_NAME)
+                    .then(cache => {
+                        console.log('Opened cache');
+                        return cache.addAll(urlsToCache);
+                    })
+            );
+        });
+
+        self.addEventListener('fetch', event => {
+            event.respondWith(
+                caches.match(event.request)
+                    .then(response => {
+                        return response || fetch(event.request);
+                    })
+            );
+        });
+
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('/service-worker.js')
+                .then((registration) => {
+                    console.log('ServiceWorker registration successful with scope: ', registration.scope);
+                })
+                .catch((error) => {
+                    console.log('ServiceWorker registration failed: ', error);
+                });
+        }
+    </script>
 </body>
 </html>
